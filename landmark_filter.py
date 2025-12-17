@@ -1,12 +1,9 @@
 class LandmarkFilter:
-    def __init__(self, alpha=0.35):
+    def __init__(self, alpha=0.4):
         self.alpha = alpha
         self.prev_landmarks = None
 
     def filter(self, landmarks):
-        """
-        Áp dụng bộ lọc EMA (Exponential Moving Average) để giảm rung.
-        """
         if landmarks is None:
             self.prev_landmarks = None
             return None
@@ -20,7 +17,7 @@ class LandmarkFilter:
             curr = landmarks[i]
             prev = self.prev_landmarks[i]
             
-            # Công thức: New = Alpha * Curr + (1-Alpha) * Prev
+            # Công thức lọc EMA làm mượt chuyển động
             new_x = self.alpha * curr[0] + (1 - self.alpha) * prev[0]
             new_y = self.alpha * curr[1] + (1 - self.alpha) * prev[1]
             new_z = self.alpha * curr[2] + (1 - self.alpha) * prev[2]

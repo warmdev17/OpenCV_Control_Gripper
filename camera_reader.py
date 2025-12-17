@@ -1,7 +1,5 @@
 import cv2
 import time
-import sys
-import platform
 
 class CameraReader:
     def __init__(self, device_index=0, width=640, height=480):
@@ -13,19 +11,11 @@ class CameraReader:
         self.prev_time = time.time()
 
     def open(self):
-        # Trên Linux (Arch), backend V4L2 thường ổn định nhất
-        system_os = platform.system()
-        if system_os == "Windows":
-            backend = cv2.CAP_DSHOW
-        elif system_os == "Linux":
-            backend = cv2.CAP_V4L2
-        else:
-            backend = cv2.CAP_ANY
-
-        self.cap = cv2.VideoCapture(self.device_index, backend)
+        # Trên Windows, dùng CAP_DSHOW giúp mở camera nhanh hơn và không bị delay
+        self.cap = cv2.VideoCapture(self.device_index, cv2.CAP_DSHOW)
         
         if not self.cap.isOpened():
-            # Thử lại với backend mặc định nếu thất bại
+            # Thử lại chế độ mặc định nếu DSHOW lỗi
             self.cap = cv2.VideoCapture(self.device_index)
             
         if not self.cap.isOpened():
@@ -50,7 +40,7 @@ class CameraReader:
         self.fps = fps_curr
         self.prev_time = curr_time
 
-        # Lật ảnh (Mirror) cho tự nhiên giống soi gương
+        # Lật ảnh (Mirror) cho tự nhiên
         return cv2.flip(frame, 1)
 
     def get_fps(self):
